@@ -6,12 +6,10 @@ object Z3jarBuild extends Build {
   lazy val PS               = java.io.File.pathSeparator
   lazy val DS               = java.io.File.separator
 
-  lazy val cPath            = file("src") / "c"
-  lazy val cFiles           = file("src") / "c" * "*.c"
   lazy val soName           = System.mapLibraryName("z3jar")
 
-  lazy val z3Name     = if (isMac) "libz3.dylib" else if(isWindows) "libz3.dll" else System.mapLibraryName("z3")
-  lazy val javaZ3Name = if (isMac) "libz3java.dylib" else if(isWindows) "libz3java.dll" else System.mapLibraryName("z3java")
+  lazy val z3Name     = if (isMac) "libz3.dylib" else if (isWindows) "libz3.dll" else System.mapLibraryName("z3")
+  lazy val javaZ3Name = if (isMac) "libz3java.dylib" else if (isWindows) "libz3java.dll" else System.mapLibraryName("z3java")
 
   lazy val libBinPath        = file("lib-bin")
   lazy val z3BinFilePath     = z3BuildPath / z3Name
@@ -172,8 +170,7 @@ object Z3jarBuild extends Build {
            "-Wall " +
            "-g -lc " +
            "-Wl,-rpath,"+extractDir(cs)+" -Wl,--no-as-needed -Wl,--copy-dt-needed " +
-           "-lz3 -fPIC -O2 -fopenmp " +
-           cFiles.getPaths.mkString(" "), s)
+           "-lz3 -fPIC -O2 -fopenmp", s)
 
     } else if (isWindows) {
       exec("gcc -std=gnu89 -shared -o " + libBinFilePath.absolutePath + " " +
@@ -183,8 +180,7 @@ object Z3jarBuild extends Build {
            "-I " + "\"" + jdkWinIncludePath.absolutePath + "\" " +
            "-I " + "\"" + z3ApiPath.absolutePath + "\" " +
            "-Wreturn-type " +
-           cFiles.getPaths.mkString(" ") +
-           " " + z3BinFilePath.absolutePath + "\" ", s)
+           z3BinFilePath.absolutePath + "\" ", s)
     } else if (isMac) {
       val frameworkPath = "/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers"
 
@@ -200,8 +196,7 @@ object Z3jarBuild extends Build {
            "-L" + z3BuildPath.absolutePath + " " +
            "-g -lc " +
            "-Wl,-rpath,"+extractDir(cs)+" " +
-           "-lz3 -fPIC -O2 -fopenmp " +
-           cFiles.getPaths.mkString(" "), s)
+           "-lz3 -fPIC -O2 -fopenmp", s)
     } else {
       s.log.error("Unknown arch: "+osInf+" - "+osArch)
     }
@@ -240,17 +235,18 @@ object Z3jarBuild extends Build {
     case jar => List(Attributed.blank(jar))
   }
 
-  lazy val root = Project(id = "Z3jar",
-                          base = file("."),
-                          settings = Project.defaultSettings ++ Seq(
-                            checksumKey <<= checksumTask,
-                            gccKey <<= gccTask,
-                            z3Key <<= z3Task,
-                            Keys.`package`.in(Compile) <<= packageTask,
-                            (compile in Compile) <<= (compile in Compile) dependsOn (checksumTask),
-                            (test in Test) <<= (test in Test) dependsOn (Keys.`package` in Compile),
-                            testClasspath,
-                            newMappingsTask
-                          )
-                        )
+  lazy val root = Project(
+    id = "Z3jar",
+    base = file("."),
+    settings = Project.defaultSettings ++ Seq(
+      checksumKey <<= checksumTask,
+      gccKey <<= gccTask,
+      z3Key <<= z3Task,
+      Keys.`package`.in(Compile) <<= packageTask,
+      (compile in Compile) <<= (compile in Compile) dependsOn (checksumTask),
+      (test in Test) <<= (test in Test) dependsOn (Keys.`package` in Compile),
+      testClasspath,
+      newMappingsTask
+    )
+  )
 }
