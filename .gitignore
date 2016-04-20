@@ -1,0 +1,19 @@
+# Generated shared lib for various platforms
+lib-bin/*.so
+
+# sbt specific
+project/build/target
+target
+
+# Generated at compilation
+src/main/java/z3/LibraryChecksum.java
+
+# Z3 distributions
+z3/*
+
+# Vim and more
+*.swp
+
+# IDEA project files
+.idea/*
+*.iml
