@@ -10,13 +10,14 @@ Building Z3jar
 
 Depends on Java and SBT 0.13.x.
 
-Start by cloning the [Z3 source repository](https://github.com/Z3Prover/z3)
+1. Start by cloning the [Z3 source repository](https://github.com/Z3Prover/z3)
 into z3/ (this will be the default location if cloning from repository base).
-In order to build z3 and package all relevant sources into a single jar,
-simple call `sbt package`. The resulting jar (for scala 2.11) can be found at
-'''
+
+2. In order to build z3 and package all relevant sources into a single jar,
+simply call `sbt package`. The resulting jar (for scala 2.11) can be found at
+```
 target/scala-2.11/z3jar_2.11-1.0.jar
-'''
+```
 
 
 
